@@ -61,7 +61,7 @@ rerun_options_parse "$@"
 
 # - - -
 # Put the command implementation here.
-chef-solo
+sudo chef-solo
 # - - -
 
 # Done. Exit with last command exit status.
