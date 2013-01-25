@@ -1,5 +1,5 @@
 Summary: %{pkgname} Cookbook
-Name: ${pkgname}
+Name: %{pkgname}
 Version: %{cookbook_version}
 Release: %{bldnum}%{?dist}
 Source0: %{pkgname}.tar.gz

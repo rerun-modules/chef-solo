@@ -10,7 +10,7 @@
 # and show its options.
 # 
 #/ command: chef-solo:mkcookbook: "Make a deployable package of a cookbook on the net"
-#/ usage: rerun chef-solo:mkcookbook  --scm <git>  --scmurl <>  --target </tmp> [ --pkgname <>]  --build-number <> 
+#/ usage: rerun chef-solo:mkcookbook  --scm <git>  --scmurl <>  --target </tmp> [ --pkgname <>]  --build-number <>  --cookbook-version <1.0.0> 
 
 # Load common functions
 # ---------------------
@@ -47,7 +47,7 @@ set -o nounset -o pipefail
 # declared by `rerun` or by the option parser function.
 
 #/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: SCM SCMURL TARGET PKGNAME BUILD_NUMBER
+#/ option-variables: SCM SCMURL TARGET PKGNAME BUILD_NUMBER COOKBOOK_VERSION
 
 # The `rerun_options_parse` function processes the command line
 # arguments. Each accepted command line flag results in setting 
@@ -62,28 +62,29 @@ rerun_options_parse "$@"
 # - - -
 # Put the command implementation here.
 BLD=$(mktemp -d /tmp/rerun.chef-solo.XXXXX)
-mkdir -p ${BLD}/tmp/${PKGNAME:=$(basename ${SCMURL} .git)} \
+mkdir -p ${BLD}/tmp/var/chef-solo/cookbooks \
          ${BLD}/SOURCES \
          ${BLD}/BUILD \
          ${BLD}/RPMS \
          ${BLD}/SPECS \
          ${BLD}/SRPMS
 
-
-
-pushd ${BLD}/tmp/var/chef-solo/cookbooks/${PKGNAME}
+pushd ${BLD}/tmp/var/chef-solo/cookbooks
 git clone ${SCMURL}
+find . -name ".git" -type d -exec rm -rf {}/* \;
 popd
 
-tar -czf ${BLD}/SOURCES/${PKGNAME}.tar.gz -C ${BLD}/tmp . 
+tar -czf ${BLD}/SOURCES/${PKGNAME:=$(basename ${SCMURL} .git)}.tar.gz -C ${BLD}/tmp . 
 cp ${RERUN_MODULE_DIR}/lib/chef-cookbook.spec ${BLD}/SPECS/
+rm -rf ${BLD}/tmp/var
 
 rpmbuild -ba --target noarch \
+             --define "pkgname ${PKGNAME}" \
              --define "_topdir ${BLD}" \
              --define "_tmppath ${BLD}/tmp" \
-             --define "chef_version ${CHEF_SOLO_VERSION}" \
+             --define "cookbook_version ${COOKBOOK_VERSION}" \
              --define "bldnum ${BUILD_NUMBER}" \
-             ${BLD}/SPECS/chef-solo.spec
+             ${BLD}/SPECS/chef-cookbook.spec
 
 find ${BLD}/{RPMS,SRPMS}/ -name "*.rpm" -exec mv {} ${TARGET}/ \;
 
