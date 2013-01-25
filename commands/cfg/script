@@ -61,7 +61,12 @@ rerun_options_parse "$@"
 
 # - - -
 # Put the command implementation here.
-sudo chef-solo
+if [[ $(id -u) = "0" ]]; then
+    SUDO=""
+else
+    SUDO="sudo "
+fi
+${SUDO}chef-solo -j /etc/chef/node.json
 # - - -
 
 # Done. Exit with last command exit status.
