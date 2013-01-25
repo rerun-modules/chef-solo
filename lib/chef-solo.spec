@@ -1,7 +1,7 @@
 Summary: Chef Solo
 Name: chef-solo
-Version: %{chef_version}%{?dist}
-Release: %{release} 
+Version: %{chef_version}
+Release: %{release}%{?dist}
 Source0: chef-solo.tar.gz
 
 License: APL v2.0
