@@ -1,8 +1,8 @@
-Summary: Chef Solo
-Name: chef-solo
-Version: %{chef_version}
+Summary: %{pkgname} Cookbook
+Name: ${pkgname}
+Version: %{cookbook_version}
 Release: %{bldnum}%{?dist}
-Source0: chef-solo.tar.gz
+Source0: %{pkgname}.tar.gz
 
 License: APL v2.0
 Group: Applications/System
@@ -10,7 +10,6 @@ Group: Applications/System
 # Disables automatic dependencies in order to allow for using an alternate RPM database:
 AutoReqProv: no
 
-# Makes the package relocatable:
 Prefix: /usr
 
 BuildArch: noarch
@@ -24,7 +23,7 @@ BuildArch: noarch
 %define _binary_payload w7.lzdio
  
 %description
-Chef Solo configuration management utility
+%{pkgname} cookbook which adds configuration logic into chef
  
 %prep
 %setup -c

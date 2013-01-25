@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+# To implement this command, edit the "Command implementation" section below. 
+
+# Usage
+# -----
+
+# Comments prefixed with `#/` are managed by stubbs.
+# The `command` and `usage` comments describe the command
+# and show its options.
+# 
+#/ command: chef-solo:mkcookbook: "Make a deployable package of a cookbook on the net"
+#/ usage: rerun chef-solo:mkcookbook  --scm <git>  --scmurl <>  --target </tmp> [ --pkgname <>]  --build-number <> 
+
+# Load common functions
+# ---------------------
+
+# Load the function library for this module.
+# This loads rerun functions, too.
+. $RERUN_MODULE_DIR/lib/functions.sh mkcookbook || { 
+  echo >&2 "Failed loading function library." ; exit 1 ; 
+}
+
+# Error handling
+# ---------------
+
+# This script is designed to _fail-fast_.
+
+# Trap errors and exit. The call to `rerun_die` will print the
+# the error message and exit with the error command exit status. 
+
+trap 'rerun_die $? "*** command failed: chef-solo:mkcookbook. ***"' ERR
+
+# Run [set] `nounset` to treat unset variables as errors. Set [pipefail]
+# so a pipeline return status is the value of the last 
+# (rightmost) command to exit with non-zero status.
+#
+# [set]: http://ss64.com/bash/set.html
+# [pipefail]: http://www.gnu.org/software/bash/manual/html_node/Pipelines.html
+
+set -o nounset -o pipefail
+
+# Command variables
+# -----------------
+
+# This command script can access the following variables
+# declared by `rerun` or by the option parser function.
+
+#/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
+#/ option-variables: SCM SCMURL TARGET PKGNAME BUILD_NUMBER
+
+# The `rerun_options_parse` function processes the command line
+# arguments. Each accepted command line flag results in setting 
+# one the corresponding option variables.
+
+rerun_options_parse "$@"
+
+
+# Command implementation
+# ----------------------
+
+# - - -
+# Put the command implementation here.
+BLD=$(mktemp -d /tmp/rerun.chef-solo.XXXXX)
+mkdir -p ${BLD}/tmp/${PKGNAME:=$(basename ${SCMURL} .git)} \
+         ${BLD}/SOURCES \
+         ${BLD}/BUILD \
+         ${BLD}/RPMS \
+         ${BLD}/SPECS \
+         ${BLD}/SRPMS
+
+
+
+pushd ${BLD}/tmp/var/chef-solo/cookbooks/${PKGNAME}
+git clone ${SCMURL}
+popd
+
+tar -czf ${BLD}/SOURCES/${PKGNAME}.tar.gz -C ${BLD}/tmp . 
+cp ${RERUN_MODULE_DIR}/lib/chef-cookbook.spec ${BLD}/SPECS/
+
+rpmbuild -ba --target noarch \
+             --define "_topdir ${BLD}" \
+             --define "_tmppath ${BLD}/tmp" \
+             --define "chef_version ${CHEF_SOLO_VERSION}" \
+             --define "bldnum ${BUILD_NUMBER}" \
+             ${BLD}/SPECS/chef-solo.spec
+
+find ${BLD}/{RPMS,SRPMS}/ -name "*.rpm" -exec mv {} ${TARGET}/ \;
+
+rm -rf ${BLD}
+# - - -
+
+# Done. Exit with last command exit status.
+exit $?
+
