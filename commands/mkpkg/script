@@ -89,7 +89,7 @@ rpmbuild -ba --target noarch \
              --define "_topdir ${BLD}" \
              --define "_tmppath ${BLD}/tmp" \
              --define "chef_version ${CHEF_SOLO_VERSION}" \
-             --define "release ${BUILD_NUMBER}" \
+             --define "bldnum ${BUILD_NUMBER}" \
              ${BLD}/SPECS/chef-solo.spec
 
 find ${BLD}/{RPMS,SRPMS}/ -name "*.rpm" -exec mv {} ${TARGET}/ \;
