@@ -66,14 +66,14 @@ if [[ $(id -u) = "0" ]]; then
 else
     SUDO="sudo "
 fi
-${SUDO}yum install -y ruby ruby-devel rubygems
+${SUDO}yum update -y ruby ruby-devel rubygems
 if [[ ".amzn1" = "$(rpm --eval %{?dist})" ]]; then
-  ${SUDO}yum install -y ruby-ri ruby-rdoc
+  ${SUDO}yum update -y ruby-ri ruby-rdoc
 else
-  ${SUDO}yum install -y ruby-shadow rubygem-rdoc 
+  ${SUDO}yum update -y ruby-shadow rubygem-rdoc 
 fi
-${SUDO}yum install -y ${PKGURL:-"chef-solo"}
-${SUDO}yum install -y ${CFGPKGURL:-"chef-${ROLE}-cfg.rpm"}
+${SUDO}yum update -y ${PKGURL:-"chef-solo"}
+${SUDO}yum update -y ${CFGPKGURL:-"chef-${ROLE}-cfg.rpm"}
 # - - -
 
 # Done. Exit with last command exit status.
