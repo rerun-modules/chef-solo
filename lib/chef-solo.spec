@@ -40,7 +40,7 @@ cp -R * %{buildroot}/
 
 %files
 %defattr(-,root,root)
-/var
+/usr
  
 %changelog
 * Wed Jan 24 2013 Lee Thompson <thompson@dtosolutions.com> 10.18.2
