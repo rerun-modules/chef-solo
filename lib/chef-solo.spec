@@ -33,8 +33,8 @@ Chef Solo configuration management utility
  
 %install
 rm -rf %{buildroot}
-install -d -m 755 %{buildroot}/
-cp -R * %{buildroot}/
+install -d -m 755 %{buildroot}/%{_prefix}
+cp -R * %{buildroot}/%{_prefix}/
 
 %clean
 
