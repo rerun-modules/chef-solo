@@ -74,9 +74,7 @@ rerun_options_parse "$@"
 
 
 #$(hostname)
-ARTIFACT_ID="$(hostname)"
-
-#curl -X PUT --upload-file /tmp/informatica.910HF4.zip -u admin:password -i -v http://localhost:8081/artifactory/third-party/informatica/x86_64/910HF4/informatica.910HF4.zip
+ARTIFACT_ID="$(hostname -f)"
 
 if [ ! -f "${CHEF_VALIDATION_ARTIFACT_FILE}" ]
 then

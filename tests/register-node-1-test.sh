@@ -18,7 +18,7 @@ describe "register-node"
 # ------------------------------
 # Replace this test. 
 it_can_register_this_node() {
-   rerun chef-solo:register-node --key-repo-url http://artifactory.dev4.rms.com:8081/artifactory --key-repo-id keys-local --key-repo-username admin --key-repo-password password --chef-server ip-10-80-137-106
+   rerun chef-solo:register-node --key-repo-url http://artifactory.dev4.rms.com:8081/artifactory --key-repo-id keys-local --key-repo-username admin --key-repo-password password --chef-server ip-10-80-137-106.ec2.internal
 }
 
 
