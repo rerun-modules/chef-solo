@@ -72,7 +72,7 @@ mkdir -p ${BLD}/tmp/var/chef-solo/cookbooks \
 pushd ${BLD}/tmp/var/chef-solo/cookbooks
 git clone ${SCMURL}
 SCMPKG="$(basename ${SCMURL} .git)"
-rm -rf ./${SCMPKG}/.git
+rm -rf ./${SCMPKG}/.git ./${SCMPKG}/.gitignore
 popd
 
 tar -czf ${BLD}/SOURCES/${PKGNAME:=${SCMPKG}}.tar.gz -C ${BLD}/tmp . 
