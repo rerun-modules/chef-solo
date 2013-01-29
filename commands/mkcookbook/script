@@ -61,7 +61,7 @@ rerun_options_parse "$@"
 
 # - - -
 # Put the command implementation here.
-BLD=$(mktemp -d /tmp/rerun.chef-solo.XXXXX)
+BLD="$(mktemp -d /tmp/rerun.chef-solo.XXXXX)"
 mkdir -p ${BLD}/tmp/var/chef-solo/cookbooks \
          ${BLD}/SOURCES \
          ${BLD}/BUILD \
@@ -71,10 +71,11 @@ mkdir -p ${BLD}/tmp/var/chef-solo/cookbooks \
 
 pushd ${BLD}/tmp/var/chef-solo/cookbooks
 git clone ${SCMURL}
-find . -name ".git" -type d -exec rm -rf {}/* \;
+SCMPKG="$(basename ${SCMURL} .git)"
+rm -rf ./${SCMPKG}/.git
 popd
 
-tar -czf ${BLD}/SOURCES/${PKGNAME:=$(basename ${SCMURL} .git)}.tar.gz -C ${BLD}/tmp . 
+tar -czf ${BLD}/SOURCES/${PKGNAME:=${SCMPKG}}.tar.gz -C ${BLD}/tmp . 
 cp ${RERUN_MODULE_DIR}/lib/chef-cookbook.spec ${BLD}/SPECS/
 rm -rf ${BLD}/tmp/var
 
