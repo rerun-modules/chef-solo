@@ -24,5 +24,13 @@ fi
 # Your functions declared here.
 # - - -
 
+#
+# for registering and consuming chef validation pem 
+#
+CHEF_VALIDATION_GROUP_ID="com.rms.chef.validation"
+CHEF_VALIDATION_ARTIFACT_VERSION="LATEST"
+CHEF_VALIDATION_ARTIFACT_FORMAT="pem"
+CHEF_VALIDATION_ARTIFACT_FILE="/etc/chef/validation.pem"
+
 
 

@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+# To implement this command, edit the "Command implementation" section below. 
+
+# Usage
+# -----
+
+# Comments prefixed with `#/` are managed by stubbs.
+# The `command` and `usage` comments describe the command
+# and show its options.
+# 
+#/ command: chef-solo:register-server: "Uploads the Chef server validation key for other nodes to consume when node registration occurs"
+#/ usage: rerun chef-solo:register-server  --key-repo-url <>  --key-repo-id <>  --key-repo-username <>  --key-repo-password <> 
+
+# Load common functions
+# ---------------------
+
+# Load the function library for this module.
+# This loads rerun functions, too.
+. $RERUN_MODULE_DIR/lib/functions.sh register-server || { 
+  echo >&2 "Failed loading function library." ; exit 1 ; 
+}
+
+# Error handling
+# ---------------
+
+# This script is designed to _fail-fast_.
+
+# Trap errors and exit. The call to `rerun_die` will print the
+# the error message and exit with the error command exit status. 
+
+trap 'rerun_die $? "*** command failed: chef-solo:register-server. ***"' ERR
+
+# Run [set] `nounset` to treat unset variables as errors. Set [pipefail]
+# so a pipeline return status is the value of the last 
+# (rightmost) command to exit with non-zero status.
+#
+# [set]: http://ss64.com/bash/set.html
+# [pipefail]: http://www.gnu.org/software/bash/manual/html_node/Pipelines.html
+
+set -o nounset -o pipefail
+
+# Command variables
+# -----------------
+
+# This command script can access the following variables
+# declared by `rerun` or by the option parser function.
+
+#/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
+#/ option-variables: KEY_REPO_URL KEY_REPO_ID KEY_REPO_USERNAME KEY_REPO_PASSWORD
+
+# The `rerun_options_parse` function processes the command line
+# arguments. Each accepted command line flag results in setting 
+# one the corresponding option variables.
+
+rerun_options_parse "$@"
+
+
+# Command implementation
+# ----------------------
+
+#TO BE MANAGED AS OPTIONS
+#KEY_REPO_URL="http://artifactory.dev4.rms.com:8081/artifactory"
+#KEY_REPO_ID="keys-local"
+#KEY_REPO_USERNAME=admin
+#KEY_REPO_PASSWORD=password
+
+#hardcode see lib/functions.sh
+#CHEF_VALIDATION_GROUP_ID="com.rms.chef.validation"
+#CHEF_VALIDATION_ARTIFACT_VERSION="LATEST"
+#CHEF_VALIDATION_ARTIFACT_FORMAT="pem"
+#CHEF_VALIDATION_ARTIFACT_FILE="/etc/chef/validation.pem"
+
+
+
+#$(hostname)
+ARTIFACT_ID="$(hostname)"
+
+#curl -X PUT --upload-file /tmp/informatica.910HF4.zip -u admin:password -i -v http://localhost:8081/artifactory/third-party/informatica/x86_64/910HF4/informatica.910HF4.zip
+
+if [ ! -f /etc/chef/validation.pem ]
+then
+   rerun_die "/etc/chef/validation.pem does not exist, cannot register this server"
+fi
+
+rerun artifactory:upload-artifact --repo-url ${KEY_REPO_URL} \
+    --repo-id "${KEY_REPO_ID}" \
+    --group-id "${CHEF_VALIDATION_GROUP_ID}" \
+    --artifact-id "${ARTIFACT_ID}" \
+    --artifact-version "${CHEF_VALIDATION_ARTIFACT_VERSION}" \
+    --artifact-format "${CHEF_VALIDATION_ARTIFACT_FORMAT}" \
+    --artifact-file "${CHEF_VALIDATION_ARTIFACT_FILE}" \
+    --repo-username "${KEY_REPO_USERNAME}" \
+    --repo-password "${KEY_REPO_PASSWORD}"
+
+
+# Done. Exit with last command exit status.
+exit $?
+
