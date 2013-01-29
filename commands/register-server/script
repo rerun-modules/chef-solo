@@ -78,21 +78,25 @@ ARTIFACT_ID="$(hostname)"
 
 #curl -X PUT --upload-file /tmp/informatica.910HF4.zip -u admin:password -i -v http://localhost:8081/artifactory/third-party/informatica/x86_64/910HF4/informatica.910HF4.zip
 
-if [ ! -f /etc/chef/validation.pem ]
+if [ ! -f "${CHEF_VALIDATION_ARTIFACT_FILE}" ]
 then
-   rerun_die "/etc/chef/validation.pem does not exist, cannot register this server"
+   rerun_die "${CHEF_VALIDATION_ARTIFACT_FILE} does not exist, cannot register this server"
 fi
 
+tmpfile=$(mktemp)
+sudo cp ${CHEF_VALIDATION_ARTIFACT_FILE} "${tmpfile}"
+sudo chmod 644 "${tmpfile}"
 rerun artifactory:upload-artifact --repo-url ${KEY_REPO_URL} \
     --repo-id "${KEY_REPO_ID}" \
     --group-id "${CHEF_VALIDATION_GROUP_ID}" \
     --artifact-id "${ARTIFACT_ID}" \
     --artifact-version "${CHEF_VALIDATION_ARTIFACT_VERSION}" \
     --artifact-format "${CHEF_VALIDATION_ARTIFACT_FORMAT}" \
-    --artifact-file "${CHEF_VALIDATION_ARTIFACT_FILE}" \
+    --artifact-file "${tmpfile}" \
     --repo-username "${KEY_REPO_USERNAME}" \
     --repo-password "${KEY_REPO_PASSWORD}"
 
+sudo rm -f "${tmpfile}"
 
 # Done. Exit with last command exit status.
 exit $?

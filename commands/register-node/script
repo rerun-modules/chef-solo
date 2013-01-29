@@ -98,6 +98,12 @@ sudo cp "${validationTmp}" /etc/chef/validation.pem
 sudo chmod 600 /etc/chef/validation.pem 
 rm -f "${validationTmp}"
 
+clientRbTmp=$(mktemp)
+cp ${RERUN_MODULE_DIR}/lib/client.rb ${clientRbTmp}
+sed -i "s/@CHEF_SERVER@/${CHEF_SERVER}/g" ${clientRbTmp}
+sudo cp ${clientRbTmp} /etc/chef/client.rb
+rm -f ${clientRbTmp}
+
 #
 # execute the chef-client and register the node
 #

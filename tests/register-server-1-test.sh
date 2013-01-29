@@ -14,11 +14,7 @@
 
 describe "register-server"
 
-
-# ------------------------------
-# Replace this test. 
-it_fails_without_a_real_test() {
-    exit 1
+it_can_register_this_server() {
+ rerun chef-solo:register-server --key-repo-url http://artifactory.dev4.rms.com:8081/artifactory --key-repo-id keys-local --key-repo-username admin --key-repo-password password
 }
-# ------------------------------
 
