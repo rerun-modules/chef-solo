@@ -10,8 +10,6 @@ Group: Applications/System
 # Disables automatic dependencies in order to allow for using an alternate RPM database:
 AutoReqProv: no
 
-Prefix: /usr
-
 BuildArch: noarch
  
 # Disables debug packages and stripping of binaries:
