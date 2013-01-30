@@ -10,7 +10,7 @@
 # and show its options.
 # 
 #/ command: chef-solo:mkcookbook: "Make a deployable package of a cookbook on the net"
-#/ usage: rerun chef-solo:mkcookbook  --scm <git>  --scmurl <>  --target </tmp> [ --pkgname <>]  --build-number <>  --cookbook-version <1.0.0> 
+#/ usage: rerun chef-solo:mkcookbook  --scm <git>  --scmurl <>  --target </tmp> [ --pkgname <>]  --build-number <>  --cookbook-version <1.0.0> [ --destdir <>] 
 
 # Load common functions
 # ---------------------
@@ -47,7 +47,7 @@ set -o nounset -o pipefail
 # declared by `rerun` or by the option parser function.
 
 #/ rerun-variables: RERUN, RERUN_VERSION, RERUN_MODULES, RERUN_MODULE_DIR
-#/ option-variables: SCM SCMURL TARGET PKGNAME BUILD_NUMBER COOKBOOK_VERSION
+#/ option-variables: SCM SCMURL TARGET PKGNAME BUILD_NUMBER COOKBOOK_VERSION DESTDIR
 
 # The `rerun_options_parse` function processes the command line
 # arguments. Each accepted command line flag results in setting 
@@ -73,6 +73,10 @@ pushd ${BLD}/tmp/var/chef-solo/cookbooks
 git clone ${SCMURL}
 SCMPKG="$(basename ${SCMURL} .git)"
 rm -rf ./${SCMPKG}/.git ./${SCMPKG}/.gitignore
+#if the git repo and install directory need to be different
+if [[ -n "${DESTDIR}" ]]; then
+  mv ./${SCMPKG} ./${DESTDIR}
+fi
 popd
 
 tar -czf ${BLD}/SOURCES/${PKGNAME:=${SCMPKG}}.tar.gz -C ${BLD}/tmp . 
