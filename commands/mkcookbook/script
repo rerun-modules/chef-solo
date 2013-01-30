@@ -73,6 +73,15 @@ pushd ${BLD}/tmp/var/chef-solo/cookbooks
 git clone ${SCMURL}
 SCMPKG="$(basename ${SCMURL} .git)"
 rm -rf ./${SCMPKG}/.git ./${SCMPKG}/.gitignore
+
+# Get the spec file, or provide one
+if [[ -e ./${SCMPKG}/${SCMPKG}.spec ]]; then
+  cp ./${SCMPKG}/${SCMPKG}.spec ${BLD}/SPECS/chef-cookbook.spec
+elif [[ -e ./${SCMPKG}/${DESTDIR}.spec ]]; then
+  cp ./${SCMPKG}/${DESTDIR}.spec ${BLD}/SPECS/chef-cookbook.spec
+else
+  cp ${RERUN_MODULE_DIR}/lib/chef-cookbook.spec ${BLD}/SPECS/
+fi
 #if the git repo and install directory need to be different
 if [[ -n "${DESTDIR}" ]]; then
   mv ./${SCMPKG} ./${DESTDIR}
@@ -80,7 +89,6 @@ fi
 popd
 
 tar -czf ${BLD}/SOURCES/${PKGNAME:=${SCMPKG}}.tar.gz -C ${BLD}/tmp . 
-cp ${RERUN_MODULE_DIR}/lib/chef-cookbook.spec ${BLD}/SPECS/
 rm -rf ${BLD}/tmp/var
 
 rpmbuild -ba --target noarch \
