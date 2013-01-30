@@ -85,6 +85,8 @@ fi
 #if the git repo and install directory need to be different
 if [[ -n "${DESTDIR}" ]]; then
   mv ./${SCMPKG} ./${DESTDIR}
+else
+  DESTDIR=${SCMPKG}
 fi
 popd
 
@@ -96,6 +98,7 @@ rpmbuild -ba --target noarch \
              --define "_topdir ${BLD}" \
              --define "_tmppath ${BLD}/tmp" \
              --define "cookbook_version ${COOKBOOK_VERSION}" \
+             --define "cookbook_destdir ${DESTDIR}" \
              --define "bldnum ${BUILD_NUMBER}" \
              ${BLD}/SPECS/chef-cookbook.spec
 
